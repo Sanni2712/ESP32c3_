@@ -1,5 +1,5 @@
 # ESP32c3_
-Simple GPIO control and drive strength using the Pad registers of the esp32c3 in C & C++ using the official ESP-IDF framework
+Simple GPIO control and drive strength using the Pad registers of the esp32c3 in C & C++ using the official ESP-IDF framework and FreeRTOS library for ESP32c3
 
 ## Requirements 
 Install and setup [ESP-IDF](https://dl.espressif.com/dl/esp-idf/?idf=release-v5.2)<br><br>
