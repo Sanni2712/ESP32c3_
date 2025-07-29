@@ -1,0 +1,62 @@
+Use |= to set bits (turn ON).
+Use &= ~ to clear bits (turn OFF).
+Both methods protect other pins in the same register
+
+*reg &= ~(1 << 2);	Clears bit 2 → Forces GPIO2 OFF
+
+ (1 << 2)  represents 0b00000100
+ ~(1 << 2) represents 0b11111011
+
+Original:   0b00001110     (bitwise And(&) operation)
+Write:    & 0b11111011
+          -------------
+            0b00001010   → GPIO2 disabled; others unchanged.
+
+
+*GPIO_ENABLE_REG |= (1 << 2);
+
+(1 << 2) represents 0b00000100
+
+Original:    0b01000000  
+Write:    || 0b00000100    (bitwise OR(||) operation)
+            ------------
+Result:      0b01000100    → GPIO2 enabled; others unchanged.
+
+
+GPIO_ENABLE   (0x60004020) → writing 1 to a bit sets the respective GPIO as output and writing 0 sets it as input  
+GPIO_OUT_W1TS (0x60004008) → writing 1 to a bit sets the respective GPIO high
+GPIO_OUT_W1TC (0x6000400C) → writing 1 to a bit sets the respective GPIO low
+
+ex-
+Setting bit 4 in GPIO_ENABLE (0x60004020) enables GPIO4 as output.
+Writing 1 to bit 4 of GPIO_OUT_W1TS (0x60004008) turns GPIO4 high.
+Writing 1 to bit 4 of GPIO_OUT_W1TC (0x6000400C) turns GPIO4 low
+
+
+ESP32-C3 uses IOMUX registers to set pin drive strength.
+Each pin has a PAD register:
+                              0x60009000 + (pin number × 4)
+
+Inside the PAD register:
+ ______ _______________________________________________________________
+| Bits | Purpose                                                       |
+|------|---------------------------------------------------------------|
+| 0    | Pull-up / pull-down control                                   |
+| 1-2  | Drive strength (you use this!)                                |
+| 3    | Schmitt trigger (hysteresis)                                  |
+| 4-7  | Function selection (MUX control)                              |
+| 8-31 | Advanced options (usually reserved or pad-specific behaviors) |
+|______|_______________________________________________________________|
+
+Drive Strength Bits:
+Bits 2:1 → Drive strength:
+ ______ ________________
+| Bits | Drive Strength |
+|------|----------------|
+|  00  |     Weakest    |
+|  01  |     Weak       |
+|  10  |     Strong     |
+|  11  |     Strongest  |
+|______|________________|
+
+
